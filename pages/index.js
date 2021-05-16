@@ -1,8 +1,16 @@
-import { useRef } from 'react';
-
+import { useRef, useEffect, useState } from 'react';
+import Link from 'next/link'
 function MainPage() {
   const emailRef = useRef();
   const feedbackRef = useRef();
+
+  const [fetchData, setDataFetch] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/feedback').then((response) =>
+      response.json().then((feedback) => setDataFetch(feedback.data))
+    );
+  }, [fetchData]);
 
   function formSubmitHandler(e) {
     e.preventDefault();
@@ -43,6 +51,18 @@ function MainPage() {
         </div>
         <button>Submit Feedback</button>
       </form>
+   
+        <ul>
+          {fetchData.map((data) => (
+            <Link href={`/feedback/${data.id}`} key={data.id}>
+              <li>
+                <h2>{data.email}</h2>
+                <p>{data.feedback}</p>
+              </li>
+            </Link>
+          ))}
+        </ul>
+    
     </div>
   );
 }
