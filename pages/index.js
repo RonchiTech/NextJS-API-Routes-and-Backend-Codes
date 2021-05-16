@@ -1,16 +1,17 @@
 import { useRef, useEffect, useState } from 'react';
-import Link from 'next/link'
-function MainPage() {
+import Link from 'next/link';
+import {getFilePath,readFileData } from './api/feedback'
+function MainPage(props) {
   const emailRef = useRef();
   const feedbackRef = useRef();
 
-  const [fetchData, setDataFetch] = useState([]);
+  // const [fetchData, setDataFetch] = useState([]);
 
-  useEffect(() => {
-    fetch('/api/feedback').then((response) =>
-      response.json().then((feedback) => setDataFetch(feedback.data))
-    );
-  }, [fetchData]);
+  // useEffect(() => {
+  //   fetch('/api/feedback').then((response) =>
+  //     response.json().then((feedback) => setDataFetch(feedback.data))
+  //   );
+  // }, [fetchData]);
 
   function formSubmitHandler(e) {
     e.preventDefault();
@@ -37,6 +38,7 @@ function MainPage() {
     emailRef.current.value = '';
     feedbackRef.current.value = '';
   }
+  console.log(props.feedback);
   return (
     <div>
       <h1>Main Page</h1>
@@ -51,19 +53,35 @@ function MainPage() {
         </div>
         <button>Submit Feedback</button>
       </form>
-   
-        <ul>
-          {fetchData.map((data) => (
-            <Link href={`/feedback/${data.id}`} key={data.id}>
-              <li>
-                <h2>{data.email}</h2>
-                <p>{data.feedback}</p>
-              </li>
-            </Link>
-          ))}
-        </ul>
-    
+
+      <ul>
+        {props.feedback.map((data) => (
+          <Link href={`/feedback/${data.id}`} key={data.id}>
+            <li>
+              <h2>{data.email}</h2>
+              <p>{data.feedback}</p>
+            </li>
+          </Link>
+        ))}
+      </ul>
     </div>
   );
+}
+
+export async function getStaticProps() {
+  // const response = await fetch('/api/feedback');
+  // const feedback = await response.json();
+
+  // const response = await fetch('http://localhost:3000/api/feedback');
+  // const feedback = await response.json();
+   const filePath = getFilePath();
+   const fileData = readFileData(filePath);
+   const data = JSON.parse(fileData)
+  return {
+    props: {
+      feedback: data,
+    },
+    revalidate: 1,
+  };
 }
 export default MainPage;
