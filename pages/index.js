@@ -38,7 +38,7 @@ function MainPage(props) {
     emailRef.current.value = '';
     feedbackRef.current.value = '';
   }
-  console.log(props.feedback);
+  // console.log(props.feedback);
   return (
     <div>
       <h1>Main Page</h1>
@@ -59,7 +59,6 @@ function MainPage(props) {
           <Link href={`/feedback/${data.id}`} key={data.id}>
             <li>
               <h2>{data.email}</h2>
-              <p>{data.feedback}</p>
             </li>
           </Link>
         ))}
